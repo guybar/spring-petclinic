@@ -1,0 +1,61 @@
+name: "build and push"
+on: 
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Here we install all the tools : docker buildx, QEMU, JDK 11, JFrog CLI
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK ${{matrix.java}}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{matrix.java}}
+          distribution: 'adopt'
+          cache: maven
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      # configure JFrog CLI
+      - name: Setup JFrog CLI
+        uses: jfrog/setup-jfrog-cli@v4
+        env:
+          # JFrog platform url (for example: https://acme.jfrog.io)
+          JF_URL: ${{ vars.JF_URL }}  
+          DOCKER_REPO: "solengeu.jfrog.io/guy-docker-dev"
+          IMAGE_NAME: "spring-petclinic:1.26"
+          # JFROG_CLI_BUILD_PROJECT: guy
+        with:
+          oidc-provider-name: "guy-github"
+          
+      - name: Curation audit 
+        run: |
+          jf curation-audit
+          
+      - name: build and push 
+        run: |
+          ./gradlew build
+          docker build . -t $IMAGE_NAME
+          docker tag $IMAGE_NAME $DOCKER_REPO/$IMAGE_NAME
+          jf docker push $IMAGE_NAME $DOCKER_REPO/$IMAGE_NAME
+
+      - name: Collect and Publish Build Info
+        run: |
+          # Collect environment variables for the build
+          jf rt bce
+          # Collect VCS details from git and add them to the build
+          jf rt bag
+          # Publish build info
+          jf rt bp
+
+      - name: Security Audit
+        run: | 
+          jf audit
+        
+      - name: Scan Build
+        run: | 
+          jf bs
+
+          
