@@ -11,7 +11,7 @@ jobs:
       # JFrog platform url (for example: https://acme.jfrog.io)
       JF_URL: ${{ vars.JF_URL }}  
       DOCKER_REPO: "solengeu.jfrog.io/guy-docker-dev"
-      IMAGE_NAME: "spring-petclinic:1.26"
+      IMAGE_NAME: "spring-petclinic:3.3.0"
       # JFROG_CLI_BUILD_PROJECT: guy
       # JFROG_CLI_LOG_LEVEL: DEBUG
     # Here we install all the tools : docker buildx, QEMU, JDK 11, JFrog CLI
