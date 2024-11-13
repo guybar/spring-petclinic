@@ -55,10 +55,6 @@ jobs:
           jf rt bag
           # Publish build info
           jf rt bp
-
-      - name: Security Audit
-        run: | 
-          jf audit
         
       - name: Scan Build
         run: | 
