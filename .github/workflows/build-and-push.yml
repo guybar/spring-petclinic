@@ -41,7 +41,7 @@ jobs:
       
       - name: docker build and push 
         run: |
-          ls build
+          ls build/generated
           docker build -t $DOCKER_REPO/$IMAGE_NAME .
           # docker images
           # docker tag $IMAGE_NAME $DOCKER_REPO/$IMAGE_NAME
