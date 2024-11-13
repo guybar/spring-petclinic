@@ -7,6 +7,13 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # JFrog platform url (for example: https://acme.jfrog.io)
+      JF_URL: ${{ vars.JF_URL }}  
+      DOCKER_REPO: "solengeu.jfrog.io/guy-docker-dev"
+      IMAGE_NAME: "spring-petclinic:1.26"
+      # JFROG_CLI_BUILD_PROJECT: guy
+      # JFROG_CLI_LOG_LEVEL: DEBUG
     # Here we install all the tools : docker buildx, QEMU, JDK 11, JFrog CLI
     steps:
       - uses: actions/checkout@v4
@@ -21,12 +28,6 @@ jobs:
       # configure JFrog CLI
       - name: Setup JFrog CLI
         uses: jfrog/setup-jfrog-cli@v4
-        env:
-          # JFrog platform url (for example: https://acme.jfrog.io)
-          JF_URL: ${{ vars.JF_URL }}  
-          DOCKER_REPO: "solengeu.jfrog.io/guy-docker-dev"
-          IMAGE_NAME: "spring-petclinic:1.26"
-          # JFROG_CLI_BUILD_PROJECT: guy
         with:
           oidc-provider-name: "guy-github"
           
@@ -41,10 +42,10 @@ jobs:
       - name: docker build and push 
         run: |
           echo $IMAGE_NAME
-          docker build .
-          docker images
-          docker tag $IMAGE_NAME $DOCKER_REPO/$IMAGE_NAME
-          jf docker push $IMAGE_NAME $DOCKER_REPO/$IMAGE_NAME
+          docker build -t $DOCKER_REPO/$IMAGE_NAME .
+          # docker images
+          # docker tag $IMAGE_NAME $DOCKER_REPO/$IMAGE_NAME
+          jf docker push $DOCKER_REPO/$IMAGE_NAME
 
       - name: Collect and Publish Build Info
         run: |
