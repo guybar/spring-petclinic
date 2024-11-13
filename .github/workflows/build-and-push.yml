@@ -37,7 +37,8 @@ jobs:
       - name: build and push 
         run: |
           ./gradlew build
-          docker build . -t $IMAGE_NAME
+          echo $IMAGE_NAME
+          docker build -t $IMAGE_NAME .
           docker tag $IMAGE_NAME $DOCKER_REPO/$IMAGE_NAME
           jf docker push $IMAGE_NAME $DOCKER_REPO/$IMAGE_NAME
 
