@@ -1,4 +1,4 @@
-name: "Guy - spring-petclinicn Build"
+name: "GuySpringPetclinicBuild"
 on: 
   workflow_dispatch:
 permissions:
